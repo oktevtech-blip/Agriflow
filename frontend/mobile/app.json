@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "AgriFlow Farmer",
+    "slug": "agriflow-farmer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#16a34a",
+      "resizeMode": "contain",
+      "image": "./assets/splash.png"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.agriflow.farmer"
+    },
+    "android": {
+      "package": "com.agriflow.farmer"
+    },
+    "scheme": "agriflow",
+    "plugins": [
+      [
+        "expo-asset",
+        {
+          "assets": []
+        }
+      ]
+    ]
+  }
+}
