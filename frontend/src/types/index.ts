@@ -7,7 +7,7 @@ export interface Farmer {
   name: string;
   phone: string | null;
   location: string;
-  farm_size_hectares: number;
+  crop: string;
   created_at: string;
 }
 
