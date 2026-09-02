@@ -1,5 +1,5 @@
 export type HarvestStatus = 'planted' | 'growing' | 'ready' | 'harvested';
-export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'in_transit' | 'delivered' | 'cancelled';
+export type OrderStatus = 'requested' | 'pending' | 'confirmed' | 'processing' | 'in_transit' | 'delivered' | 'cancelled';
 export type DeliveryStatus = 'assigned' | 'pickup' | 'in_transit' | 'delivered';
 
 export interface Farmer {
@@ -50,6 +50,7 @@ export interface Order {
   id: string;
   buyer_id: string;
   crop_id: string;
+  farmer_id: string | null;
   quantity_kg: number;
   unit_price: number;
   status: OrderStatus;
@@ -60,6 +61,7 @@ export interface Order {
   // joined
   buyer?: Buyer;
   crop?: Crop;
+  farmer?: Farmer;
 }
 
 export interface Transporter {

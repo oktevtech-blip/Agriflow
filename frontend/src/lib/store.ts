@@ -71,11 +71,11 @@ const seedHarvests: Harvest[] = [
 ];
 
 const seedOrders: Order[] = [
-  { id: 'o1', buyer_id: 'b1', crop_id: 'c1', quantity_kg: 2500, unit_price: 3.50, status: 'confirmed', notes: null, created_at: daysAgo(5), confirmed_at: daysAgo(4), delivered_at: null },
-  { id: 'o2', buyer_id: 'b2', crop_id: 'c2', quantity_kg: 4000, unit_price: 2.80, status: 'confirmed', notes: null, created_at: daysAgo(3), confirmed_at: daysAgo(2), delivered_at: null },
-  { id: 'o3', buyer_id: 'b3', crop_id: 'c3', quantity_kg: 1500, unit_price: 1.20, status: 'pending', notes: null, created_at: daysAgo(1), confirmed_at: null, delivered_at: null },
-  { id: 'o4', buyer_id: 'b4', crop_id: 'c8', quantity_kg: 6000, unit_price: 4.10, status: 'processing', notes: null, created_at: daysAgo(6), confirmed_at: daysAgo(5), delivered_at: null },
-  { id: 'o5', buyer_id: 'b5', crop_id: 'c5', quantity_kg: 800, unit_price: 2.00, status: 'pending', notes: null, created_at: daysAgo(0), confirmed_at: null, delivered_at: null },
+  { id: 'o1', buyer_id: 'b1', crop_id: 'c1', farmer_id: 'f1', quantity_kg: 2500, unit_price: 3.50, status: 'confirmed', notes: null, created_at: daysAgo(5), confirmed_at: daysAgo(4), delivered_at: null },
+  { id: 'o2', buyer_id: 'b2', crop_id: 'c2', farmer_id: 'f2', quantity_kg: 4000, unit_price: 2.80, status: 'confirmed', notes: null, created_at: daysAgo(3), confirmed_at: daysAgo(2), delivered_at: null },
+  { id: 'o3', buyer_id: 'b3', crop_id: 'c3', farmer_id: null, quantity_kg: 1500, unit_price: 1.20, status: 'requested', notes: null, created_at: daysAgo(1), confirmed_at: null, delivered_at: null },
+  { id: 'o4', buyer_id: 'b4', crop_id: 'c8', farmer_id: 'f3', quantity_kg: 6000, unit_price: 4.10, status: 'processing', notes: null, created_at: daysAgo(6), confirmed_at: daysAgo(5), delivered_at: null },
+  { id: 'o5', buyer_id: 'b5', crop_id: 'c5', farmer_id: null, quantity_kg: 800, unit_price: 2.00, status: 'requested', notes: null, created_at: daysAgo(0), confirmed_at: null, delivered_at: null },
 ];
 
 const seedDeliveries: Delivery[] = [
@@ -120,6 +120,7 @@ class DataStore {
       ...o,
       buyer: this.buyers.find((b) => b.id === o.buyer_id),
       crop: this.crops.find((c) => c.id === o.crop_id),
+      farmer: o.farmer_id ? this.farmers.find((f) => f.id === o.farmer_id) : undefined,
     };
   }
 
@@ -142,6 +143,13 @@ class DataStore {
   getDeliveries(): Delivery[] { return this.deliveries.map((d) => this.resolveDelivery(d)); }
 
   // ── Writes ──
+  addBuyer(data: Omit<Buyer, 'id' | 'created_at'>): Buyer {
+    const buyer: Buyer = { ...data, id: uid(), created_at: new Date().toISOString() };
+    this.buyers.push(buyer);
+    this.notify();
+    return buyer;
+  }
+
   addFarmer(data: Omit<Farmer, 'id' | 'created_at'>): Farmer {
     const farmer: Farmer = { ...data, id: uid(), created_at: new Date().toISOString() };
     this.farmers.push(farmer);
@@ -181,7 +189,8 @@ class DataStore {
     const order: Order = {
       ...data,
       id: uid(),
-      status: 'pending',
+      farmer_id: null,
+      status: 'requested',
       created_at: new Date().toISOString(),
       confirmed_at: null,
       delivered_at: null,
@@ -189,6 +198,22 @@ class DataStore {
     this.orders.push(order);
     this.notify();
     return order;
+  }
+
+  assignFarmer(orderId: string, farmerId: string): void {
+    const order = this.orders.find((o) => o.id === orderId);
+    if (!order) return;
+    order.farmer_id = farmerId;
+    order.status = 'pending';
+    this.notify();
+  }
+
+  confirmOrder(orderId: string): void {
+    const order = this.orders.find((o) => o.id === orderId);
+    if (!order) return;
+    order.status = 'confirmed';
+    order.confirmed_at = new Date().toISOString();
+    this.notify();
   }
 
   updateOrder(id: string, updates: Partial<Order>): void {

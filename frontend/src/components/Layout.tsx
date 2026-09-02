@@ -10,9 +10,10 @@ import {
   Menu,
   X,
   Leaf,
+  Store,
 } from 'lucide-react';
 
-export type Page = 'dashboard' | 'farmers' | 'production' | 'orders' | 'logistics' | 'ai';
+export type Page = 'dashboard' | 'farmers' | 'production' | 'buyers' | 'orders' | 'logistics' | 'ai';
 
 interface NavItem {
   id: Page;
@@ -25,7 +26,8 @@ const NAV: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Overview & analytics' },
   { id: 'farmers', label: 'Farmers', icon: Users, description: 'Manage farmer registry' },
   { id: 'production', label: 'Production', icon: Wheat, description: 'Crops & harvests' },
-  { id: 'orders', label: 'Orders', icon: ShoppingCart, description: 'Buyer marketplace' },
+  { id: 'buyers', label: 'Buyers', icon: Store, description: 'Buyer directory & orders' },
+  { id: 'orders', label: 'Orders', icon: ShoppingCart, description: 'Manage buyer requests' },
   { id: 'logistics', label: 'Logistics', icon: Truck, description: 'Deliveries & transport' },
   { id: 'ai', label: 'AI Assistant', icon: Sparkles, description: 'Smart insights' },
 ];
